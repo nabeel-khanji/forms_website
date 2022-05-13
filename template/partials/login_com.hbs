@@ -13,13 +13,13 @@
                   <h4 class="mt-1 mb-5 pb-1">We are The Cubix Team</h4>
                 </div>
 
-                <form action="register" method="get">
+                <form action="/login" method="POST">
                   <p>Please login to your account</p>
 
                       <div class="d-flex flex-row align-items-center mb-4">
                     <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <input type="email" id="form3Example3c" class="form-control" />
+                      <input type="email" required name="email" id="form3Example3c" class="form-control" />
                       <label class="form-label" for="form3Example3c">Your Email</label>
                     </div>
                   </div>
@@ -27,13 +27,13 @@
                       <div class="d-flex flex-row align-items-center mb-4">
                     <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <input type="password" id="form3Example4c" class="form-control" />
+                      <input name="password" required type="password" id="form3Example4c" class="form-control" />
                       <label class="form-label" for="form3Example4c">Password</label>
                     </div>
                   </div>
 
                   <div class="text-center pt-1 mb-5 pb-1">
-                    <button class="btn btn-sm btn-primary btn-block fa-lg gradient-custom-2 mb-3" type="button">Log
+                    <button  class="btn btn-sm btn-primary btn-block fa-lg gradient-custom-2 mb-3" type="submit">Log
                       in</button>
                     {{!-- <a class="text-muted" href="#!">Forgot password?</a> --}}
                   </div>

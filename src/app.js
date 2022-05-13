@@ -25,20 +25,19 @@ app.get("/", (req, res) => {
 app.get("/register", (req, res) => {
   res.render("register");
 });
+
 app.post("/register", async (req, res) => {
   try {
-  
-if (req.body.password===req.body.confirmpassword) {  const result = await Employee(req.body);
-  // console.log(result);
-  const addUser = await result.save();
-  console.log(addUser);
-  console.log(result.name);
-  res.render("index",{result :result});
-
-}else{
-  res.send('password not match');
-}
-
+    if (req.body.password === req.body.confirmpassword) {
+      const result = await Employee(req.body);
+      // console.log(result);
+      const addUser = await result.save();
+      console.log(addUser);
+      console.log(result.name);
+      res.render("index", { result: result });
+    } else {
+      res.send("password not match");
+    }
   } catch (error) {
     res.status(400).send(error);
   }
@@ -46,6 +45,30 @@ if (req.body.password===req.body.confirmpassword) {  const result = await Employ
 app.get("/login", async (req, res) => {
   res.render("login");
 });
+app.post("/login", async (req, res) => {
+  try {
+    const email=req.body.email;
+    const password= req.body.password;
+
+ const result=  await Employee.findOne({email:email});
+ if(!result){
+  res.send("invalid email");
+ }else{
+  console.log(result.password);
+  // res.send(result.password);
+  if(email==result.email&&password==result.password){
+   res.render("index", { result: result });
+ }else{
+   res.send("password not match ");
+   
+ }
+ }
+
+      } catch (error) {
+    res.status(400).send("invalid email or password");
+  }
+});
+
 
 app.listen(port, () => {
   console.log(`listening to the port ${port}`);
