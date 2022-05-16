@@ -2,6 +2,7 @@ const express = require("express");
 const hbs = require("hbs");
 const async = require("hbs/lib/async");
 const path = require("path");
+const bcrypt = require("bcryptjs");
 require("./db/con");
 const Employee = require("./model/register");
 const port = process.env.PORT || 3000;
@@ -9,16 +10,19 @@ const app = express();
 const public_path = path.join(__dirname, "../public");
 const partial_path = path.join(__dirname, "../template/partials");
 const view_path = path.join(__dirname, "../template/views");
-
-console.log(`${public_path}\n${partial_path}\n${view_path}`);
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
 app.use(express.static(public_path));
 app.set("view engine", "hbs");
 app.set("views", view_path);
-
 hbs.registerPartials(partial_path);
+const securePassword = async (password) => {
+  const passwordHashed = await bcrypt.hash(password, 10);
+  console.log(passwordHashed);
+  const passwordMatch = await bcrypt.compare(password, passwordHashed);
+  console.log(passwordMatch);
+};
+securePassword("nabeel");
 app.get("/", (req, res) => {
   res.render("index");
 });
@@ -47,29 +51,44 @@ app.get("/login", async (req, res) => {
 });
 app.post("/login", async (req, res) => {
   try {
-    const email=req.body.email;
-    const password= req.body.password;
+    const email = req.body.email;
+    const password = req.body.password;
 
- const result=  await Employee.findOne({email:email});
- if(!result){
-  res.send("invalid email");
- }else{
-  console.log(result.password);
-  // res.send(result.password);
-  if(email==result.email&&password==result.password){
-   res.render("index", { result: result });
- }else{
-   res.send("password not match ");
-   
- }
- }
-
-      } catch (error) {
+    const result = await Employee.findOne({ email: email });
+    if (!result) {
+      res.send("invalid email");
+    } else {
+      console.log(result.password);
+      // res.send(result.password);
+      if (email == result.email && password == result.password) {
+        res.render("index", { result: result });
+      } else {
+        res.send("password not match ");
+      }
+    }
+  } catch (error) {
     res.status(400).send("invalid email or password");
   }
 });
+// let a = 5;
+// let b =a ;
+// b +=5;
+// console.log(a,b);
+// let a =[0,1,2,[0,2],[0,2,3,[5]]]
+// let c= a.flat(Infinity);
+// console.log(c);
+// let a = 'name';
 
+// let b= "nabeel";
+// let c = {
+//   [a]: b,
 
+// }
+
+// console.log(c);
+
+// b.push(6)
+// console.log(a,b);
 app.listen(port, () => {
   console.log(`listening to the port ${port}`);
 });
