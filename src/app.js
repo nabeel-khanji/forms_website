@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const hbs = require("hbs");
 const path = require("path");
@@ -5,7 +6,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("./db/con");
 const Employee = require("./model/register");
- const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000;
 const app = express();
 const public_path = path.join(__dirname, "../public");
 const partial_path = path.join(__dirname, "../template/partials");
@@ -81,7 +82,7 @@ app.post("/login", async (req, res) => {
 const createToken = async () => {
   const token = await jwt.sign(
     { _id: "6282036e7c33ccbd3b798a53" },
-    "mynameisnabeelkhanjeemernstackdeveloper",
+    process.env.SECRET_KEY,
     {
       expiresIn: "2 seconds",
     }
@@ -89,7 +90,7 @@ const createToken = async () => {
   console.log(token);
   const userVer = await jwt.verify(
     token,
-    "mynameisnabeelkhanjeemernstackdeveloper"
+process.env.SECRET_KEY,
   );
   console.log(userVer);
 };
