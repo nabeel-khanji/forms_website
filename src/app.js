@@ -32,6 +32,10 @@ app.post("/register", async (req, res) => {
 
       const token = await result.generateAuthToken();
       // console.log(result);
+      res.cookie("jwt", token, {
+        expires: new Date(Date.now() + 30000),
+        httpOnly: true,
+      });
       const addUser = await result.save();
 
       res.render("index", { result: result });
@@ -50,6 +54,7 @@ app.post("/login", async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
     const result = await Employee.findOne({ email: email });
+
     if (!result) {
       res.send("invalid email");
     } else {
@@ -57,6 +62,10 @@ app.post("/login", async (req, res) => {
       const passwordMatch = await bcrypt.compare(password, result.password);
       const token = await result.generateAuthToken();
 
+      res.cookie("jwt", token, {
+        expires: new Date(Date.now() + 30000),
+        httpOnly: true,
+      });
       if (email == result.email && passwordMatch) {
         res.render("index", { result: result });
       } else {
