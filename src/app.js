@@ -1,6 +1,5 @@
 const express = require("express");
 const hbs = require("hbs");
-const async = require("hbs/lib/async");
 const path = require("path");
 const bcrypt = require("bcryptjs");
 require("./db/con");
@@ -60,10 +59,12 @@ app.post("/login", async (req, res) => {
     } else {
       console.log(result.password);
       // res.send(result.password);
-      if (email == result.email && password == result.password) {
+      const passwordMatch = await bcrypt.compare(password, result.password);
+      console.log(passwordMatch);
+      if (email == result.email && passwordMatch) {
         res.render("index", { result: result });
       } else {
-        res.send("password not match ");
+        res.send("invalid email or password");
       }
     }
   } catch (error) {
