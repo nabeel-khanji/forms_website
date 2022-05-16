@@ -5,8 +5,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 require("./db/con");
 const Employee = require("./model/register");
-const async = require("hbs/lib/async");
-const port = process.env.PORT || 3000;
+ const port = process.env.PORT || 3000;
 const app = express();
 const public_path = path.join(__dirname, "../public");
 const partial_path = path.join(__dirname, "../template/partials");
@@ -35,6 +34,9 @@ app.post("/register", async (req, res) => {
   try {
     if (req.body.password === req.body.confirmpassword) {
       const result = await Employee(req.body);
+
+      const token = await result.generateAuthToken();
+      console.log(`the token part ${token}`);
       // console.log(result);
       const addUser = await result.save();
       console.log(addUser);
@@ -45,6 +47,7 @@ app.post("/register", async (req, res) => {
     }
   } catch (error) {
     res.status(400).send(error);
+    console.log(`error part `);
   }
 });
 app.get("/login", async (req, res) => {
@@ -54,7 +57,6 @@ app.post("/login", async (req, res) => {
   try {
     const email = req.body.email;
     const password = req.body.password;
-
     const result = await Employee.findOne({ email: email });
     if (!result) {
       res.send("invalid email");
@@ -63,6 +65,9 @@ app.post("/login", async (req, res) => {
       // res.send(result.password);
       const passwordMatch = await bcrypt.compare(password, result.password);
       console.log(passwordMatch);
+      const token = await result.generateAuthToken();
+      console.log(`the token part ${token}`);
+
       if (email == result.email && passwordMatch) {
         res.render("index", { result: result });
       } else {
@@ -73,14 +78,21 @@ app.post("/login", async (req, res) => {
     res.status(400).send("invalid email or password");
   }
 });
-const createToken =async()=>{
-const token=await jwt.sign({_id:"6282036e7c33ccbd3b798a53"},'mynameisnabeelkhanjeemernstackdeveloper',{
-  expiresIn:"2 seconds"
-});
-console.log(token);
-const userVer= await jwt.verify(token,'mynameisnabeelkhanjeemernstackdeveloper');
-console.log(userVer);
-}
+const createToken = async () => {
+  const token = await jwt.sign(
+    { _id: "6282036e7c33ccbd3b798a53" },
+    "mynameisnabeelkhanjeemernstackdeveloper",
+    {
+      expiresIn: "2 seconds",
+    }
+  );
+  console.log(token);
+  const userVer = await jwt.verify(
+    token,
+    "mynameisnabeelkhanjeemernstackdeveloper"
+  );
+  console.log(userVer);
+};
 createToken();
 app.listen(port, () => {
   console.log(`listening to the port ${port}`);
