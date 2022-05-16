@@ -2,8 +2,10 @@ const express = require("express");
 const hbs = require("hbs");
 const path = require("path");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 require("./db/con");
 const Employee = require("./model/register");
+const async = require("hbs/lib/async");
 const port = process.env.PORT || 3000;
 const app = express();
 const public_path = path.join(__dirname, "../public");
@@ -71,6 +73,19 @@ app.post("/login", async (req, res) => {
     res.status(400).send("invalid email or password");
   }
 });
+const createToken =async()=>{
+const token=await jwt.sign({_id:"6282036e7c33ccbd3b798a53"},'mynameisnabeelkhanjeemernstackdeveloper',{
+  expiresIn:"2 seconds"
+});
+console.log(token);
+const userVer= await jwt.verify(token,'mynameisnabeelkhanjeemernstackdeveloper');
+console.log(userVer);
+}
+createToken();
+app.listen(port, () => {
+  console.log(`listening to the port ${port}`);
+});
+
 // let a = 5;
 // let b =a ;
 // b +=5;
@@ -90,6 +105,4 @@ app.post("/login", async (req, res) => {
 
 // b.push(6)
 // console.log(a,b);
-app.listen(port, () => {
-  console.log(`listening to the port ${port}`);
-});
+//
