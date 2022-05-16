@@ -17,13 +17,7 @@ app.use(express.static(public_path));
 app.set("view engine", "hbs");
 app.set("views", view_path);
 hbs.registerPartials(partial_path);
-const securePassword = async (password) => {
-  const passwordHashed = await bcrypt.hash(password, 10);
-  console.log(passwordHashed);
-  const passwordMatch = await bcrypt.compare(password, passwordHashed);
-  console.log(passwordMatch);
-};
-securePassword("nabeel");
+
 app.get("/", (req, res) => {
   res.render("index");
 });
@@ -37,18 +31,15 @@ app.post("/register", async (req, res) => {
       const result = await Employee(req.body);
 
       const token = await result.generateAuthToken();
-      console.log(`the token part ${token}`);
       // console.log(result);
       const addUser = await result.save();
-      console.log(addUser);
-      console.log(result.name);
+
       res.render("index", { result: result });
     } else {
       res.send("password not match");
     }
   } catch (error) {
     res.status(400).send(error);
-    console.log(`error part `);
   }
 });
 app.get("/login", async (req, res) => {
@@ -62,12 +53,9 @@ app.post("/login", async (req, res) => {
     if (!result) {
       res.send("invalid email");
     } else {
-      console.log(result.password);
       // res.send(result.password);
       const passwordMatch = await bcrypt.compare(password, result.password);
-      console.log(passwordMatch);
       const token = await result.generateAuthToken();
-      console.log(`the token part ${token}`);
 
       if (email == result.email && passwordMatch) {
         res.render("index", { result: result });
@@ -79,22 +67,7 @@ app.post("/login", async (req, res) => {
     res.status(400).send("invalid email or password");
   }
 });
-const createToken = async () => {
-  const token = await jwt.sign(
-    { _id: "6282036e7c33ccbd3b798a53" },
-    process.env.SECRET_KEY,
-    {
-      expiresIn: "2 seconds",
-    }
-  );
-  console.log(token);
-  const userVer = await jwt.verify(
-    token,
-process.env.SECRET_KEY,
-  );
-  console.log(userVer);
-};
-createToken();
+
 app.listen(port, () => {
   console.log(`listening to the port ${port}`);
 });

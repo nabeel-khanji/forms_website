@@ -28,7 +28,6 @@ const employeeSchema = new mongoose.Schema({
 });
 employeeSchema.methods.generateAuthToken = async function () {
   try {
-    console.log(this._id);
     const token = jwt.sign(
       { _id: this._id.toString() },
       process.env.SECRET_KEY
@@ -38,15 +37,12 @@ employeeSchema.methods.generateAuthToken = async function () {
     return token;
   } catch (error) {
     res.send(`the error part ${error}`);
-    console.log(`the error part ${error}`);
   }
 };
 employeeSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     // const passwordHashed = await bcrypt.hash(password, 10);
-    console.log(`current password is ${this.password}`);
     this.password = await bcrypt.hash(this.password, 10);
-    console.log(`current password is ${this.password}`);
     this.confirmpassword = undefined;
   }
   next();

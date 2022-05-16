@@ -1,6 +1,6 @@
 var mongoose = require("mongoose");
 //Set up default mongoose connection
-var mongoDB = "mongodb://127.0.0.1/my_database";
+var mongoDB = process.env.DB_NAME;
 mongoose.connect(mongoDB, { useNewUrlParser: true }, () => {
   console.log("connection successfull ...");
 });
