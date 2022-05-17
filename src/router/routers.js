@@ -1,12 +1,21 @@
 var express = require("express");
+const app = express();
+
 const Employee = require("../model/register");
 var router = express.Router();
 const bcrypt = require("bcryptjs");
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+
 router.get("/", (req, res) => {
   res.render("index");
 });
 router.get("/register", (req, res) => {
   res.render("register");
+});
+router.get("/secret", (req, res) => {
+  console.log(`this is the cookie ${req.cookies}`);
+  res.render("secret");
 });
 
 router.post("/register", async (req, res) => {
@@ -16,8 +25,8 @@ router.post("/register", async (req, res) => {
 
       const token = await result.generateAuthToken();
       // console.log(result);
-      res.cookie("jwt", token, {
-        expires: new Date(Date.now() + 30000),
+      res.cookie("access_token", token, {
+        expires: new Date(Date.now() + 300000),
         httpOnly: true,
       });
       const addUser = await result.save();
@@ -46,10 +55,12 @@ router.post("/login", async (req, res) => {
       const passwordMatch = await bcrypt.compare(password, result.password);
       const token = await result.generateAuthToken();
 
-      res.cookie("jwt", token, {
-        expires: new Date(Date.now() + 30000),
+      res.cookie("access_token", token, {
+        expires: new Date(Date.now() + 300000),
         httpOnly: true,
       });
+      // console.log(`this is the cookie ${req.cookies.access_token}`);
+
       if (email == result.email && passwordMatch) {
         res.render("index", { result: result });
       } else {
